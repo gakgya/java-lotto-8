@@ -1,7 +1,9 @@
-package lotto.util;
+package lotto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import lotto.util.InputValidator;
 
 import static org.assertj.core.api.Assertions.*;
 

@@ -1,7 +1,8 @@
 package lotto.service;
 
 import camp.nextstep.edu.missionutils.Console;
-
+import lotto.domain.Lotto;
+import lotto.domain.LottoResult;
 import lotto.domain.LottoStore;
 import lotto.util.InputValidator;
 import java.util.Arrays;
@@ -14,11 +15,9 @@ public class LottoService {
 
     public void run() {
         int money = readPurchaseAmount();
-        lottoStore.buyLottos(money);
-        List<Integer> winningNumbers = readWinningNumbers();
-        int bonusNumber = readBonusNumber(winningNumbers);
-        System.out.println(winningNumbers);
-        System.out.println(bonusNumber);
+        List<Lotto> lottos = lottoStore.buyLottos(money);
+        LottoResult result = runWinningProcess(lottos);
+        result.printStatistics();
     }
 
     private int readPurchaseAmount() {
@@ -35,15 +34,18 @@ public class LottoService {
         }
     }
 
+    private LottoResult runWinningProcess(List<Lotto> lottos) {
+        List<Integer> winningNumbers = readWinningNumbers();
+        int bonusNumber = readBonusNumber(winningNumbers);
+        return new LottoResult(lottos, winningNumbers, bonusNumber);
+    }
+
     private List<Integer> readWinningNumbers() {
         while (true) {
             try {
                 System.out.println("당첨 번호를 입력해 주세요.");
                 String input = Console.readLine();
-                List<Integer> numbers = Arrays.stream(input.split(","))
-                        .map(String::trim)
-                        .map(validator::parseInteger)
-                        .collect(Collectors.toList());
+                List<Integer> numbers = Arrays.stream(input.split(",")).map(String::trim).map(validator::parseInteger).collect(Collectors.toList());
                 validator.validateWinningNumbers(numbers);
                 return numbers;
             } catch (IllegalArgumentException e) {
